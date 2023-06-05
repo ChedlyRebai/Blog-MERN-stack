@@ -49,14 +49,15 @@ const Userprofile = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchData = async () => {
-    try {
-      const token = Cookies.get('token');
+  const token = Cookies.get('token');
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       };
+  const fetchData = async () => {
+    try {
+      
 
       const response = await axios.get('http://localhost:4000/user/getUserByToken', config);
       setUserData({
@@ -100,6 +101,16 @@ const Userprofile = () => {
       return [];
     }
   };
+
+  const addLike = (idPost:String,idUser:String)=>{
+        try {
+          axios.post(`http://localhost:4000/post/addLike`, {idPost:idPost}, config).then((response) => {
+              console.log(response)
+          });
+        } catch (error) {
+          
+        }
+  }
 
   useEffect(() => {
     const fetchDataAndConvertPosts = async () => {
@@ -228,12 +239,8 @@ const questions = [
                 </div>
               </div>
             </div>
-
-
-              <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
-              
+              <div className="mt-10 py-10 border-t border-blueGray-200 text-center">   
               <div className="flex flex-wrap justify-center">
-                
               </div>
             </div>
               <div className="mt-4">
@@ -338,7 +345,7 @@ const questions = [
                         <div className="mt-6 flex justify-between space-x-8">
                           <div className="flex space-x-6">
                             <span className="inline-flex items-center text-sm">
-                              <button type="button" className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
+                              <button onClick={()=> addLike(post.postId,"ee")} type="button" className="inline-flex space-x-2 text-gray-400 hover:text-gray-500">
                                 <ThumbUpOutline className="h-5 w-5" aria-hidden="true" />
                                 <span className="font-medium text-gray-900">{post.postLikes}</span>
                                 <span className="sr-only">likes</span>

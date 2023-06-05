@@ -139,7 +139,7 @@ router.get('/allPosts', (req, res) => {
 
   
 router.get('/userPosts', (req, res) => {
-  const tokenValue = req.headers.authorization;
+    const tokenValue = req.headers.authorization;
     const token= tokenValue ? tokenValue.replace('Bearer ', '') : '' ;
     console.log("token:"+token)
     console.log(req.body)
@@ -204,6 +204,43 @@ router.get('/search/:title', (req,res) => {
        res.status(400).json(error)
     })
 });
+
+
+router.post('/addLike',(req,res)=>{
+
+  const tokenValue = req.headers.authorization;
+  const token= tokenValue ? tokenValue.replace('Bearer ', '') : '' ;
+  const decoded = jwt.verify(token, "secret");
+  const idUser= decoded.id; 
+  const {idPost}=req.body;
+  
+  
+  Post.findById(idPost)
+    .then(
+      (post)=>{
+        post.likes.push(idUser);
+        post.save();
+        console.log(post)
+      }
+    )
+})
+
+router.post('/removeLike',(req,res)=>{
+
+  const tokenValue = req.headers.authorization;
+  const token= tokenValue ? tokenValue.replace('Bearer ', '') : '' ;
+  const decoded = jwt.verify(token, "secret");
+  const idUser= decoded.id; 
+  const {idPost}=req.body;
+  
+  Post.findById(idPost)
+    .then(
+      (post)=>{
+        console.log(post)
+      }
+    )
+})
+
 
 
 
