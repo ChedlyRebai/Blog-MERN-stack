@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { NavLink } from 'react-router-dom'
@@ -7,9 +7,11 @@ import * as Yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { useGlobalContext } from '../hooks/MyGlobalContext';
+
+
 const onSubmit = async (values: any) => {
 
-    
     
 
     try{
@@ -23,7 +25,8 @@ const onSubmit = async (values: any) => {
         console.log('connect1')
         //const data={username:values.username,password: values.password}
         await axios.post('http://localhost:4000/auth/login',{ username:values.username,password: values.password})
-        .then((data)=>{ successNotify(data.data.username);
+        .then((data)=>{
+             successNotify(data.data.username);
             Cookies.set('token',data.data.token)
             console.log(data.data.token)
             console.log(data)
@@ -62,6 +65,9 @@ const successNotify = (username: string) =>toast.success(`Welcome ${username}`, 
     });
 
 function Login() {
+     const { authToken,setAuthToken } = useGlobalContext()
+    console.log(authToken)
+    
     const {values, errors, touched, handleBlur,handleChange, handleSubmit} = useFormik({
          initialValues: {
           username: "",
@@ -84,6 +90,10 @@ function Login() {
     }
   return (
 <>
+<button onClick={() => setAuthToken('This is a new copy')}>
+      Click me!
+    </button>
+    <h1>{authToken}</h1>
 <div className="bg-white dark:bg-gray-900">
         <div className="flex justify-center h-screen">
             <div className="f1 hidden bg-cover lg:block lg:w-2/3" style={style}>

@@ -13,15 +13,37 @@
     ],
   }
   ```
+
 */
+
+
+import { useState } from 'react'
+//import {  SelectorIco } from '@heroicons/react/solid'
+import { Combobox } from '@headlessui/react'
+
 import { Fragment } from 'react'
 import { Menu, Popover, Transition } from '@headlessui/react'
-import { MenuOutline, SearchOutline } from 'heroicons-react'
-import { BellIcon } from '@heroicons/react/20/solid'
+import { MenuOutline, SearchOutline, Selector, SelectorOutline } from 'heroicons-react'
+import { BellIcon, CheckIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 //import { SearchIcon } from '@heroicons/react/solid'
 //import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-Link
+const people = [
+  {
+    id: 1,
+    name: 'Leslie Alexander',
+    imageUrl:
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+  },
+  // More users...
+]
+
+
+
+
+
+
+
 const user = {
   name: 'Chelsea Hagon',
   email: 'chelsea.hagon@example.com',
@@ -44,9 +66,23 @@ function classNames(...classes:any[]) {
   return classes.filter(Boolean).join(' ')
 }
 
+
+
+
 export default function Navbar() {
+
+  const [query, setQuery] = useState('')
+  const [selectedPerson, setSelectedPerson] = useState()
+
+  const filteredPeople =
+    query === ''  
+      ? people
+      : people.filter((person) => {
+          return person.name.toLowerCase().includes(query.toLowerCase())
+        })
   return (
     <>
+   
       <Popover
           as="header"
           className={({ open }) =>
@@ -74,7 +110,7 @@ export default function Navbar() {
                   <div className="min-w-0 flex-1 md:px-8 lg:px-0 xl:col-span-6">
                     <div className="flex items-center px-6 py-4 md:max-w-3xl md:mx-auto lg:max-w-none lg:mx-0 xl:px-0">
                       <div className="w-full">
-                        <label htmlFor="search" className="sr-only">
+                        {/* <label htmlFor="search" className="sr-only">
                           Search
                         </label>
                         <div className="relative">
@@ -88,7 +124,60 @@ export default function Navbar() {
                             placeholder="Search"
                             type="search"
                           />
-                        </div>
+                        </div> */}
+
+     <Combobox as="div" value={selectedPerson} onChange={setSelectedPerson}>
+        <div className="relative mt-1">
+        <Combobox.Input
+          className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 shadow-sm focus:border-rose-500 focus:outline-none focus:ring-1 focus:ring-rose-500 sm:text-sm"
+          onChange={(event) => setQuery(event.target.value)}
+          displayValue={(person:any) => person.name}
+        />
+        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+          <SearchOutline className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        </Combobox.Button>
+
+        {filteredPeople.length > 0 && (
+          <Combobox.Options className="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+            {filteredPeople.map((person) => (
+              <Combobox.Option
+                key={person.id}
+                value={person}
+                className={({ active }) =>
+                  classNames(
+                    'relative cursor-default select-none py-2 pl-3 pr-9',
+                    active ? 'bg-rose-600 text-white' : 'text-gray-900'
+                  )
+                }
+              >
+                {({ active, selected }) => (
+                  <>
+                    <div className="flex items-center">
+                      <img src={person.imageUrl} alt="" className="h-6 w-6 flex-shrink-0 rounded-full" />
+                      <span className={classNames('ml-3 truncate', selected && 'font-semibold')}>{person.name}</span>
+                    </div>
+
+                    {selected && (
+                      <span
+                        className={classNames(
+                          'absolute inset-y-0 right-0 flex items-center pr-4',
+                          active ? 'text-white' : 'text-rose-600'
+                        )}
+                      >
+                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                      </span>
+                    )}
+                  </>
+                )}
+              </Combobox.Option>
+            ))}
+          </Combobox.Options>
+        )}
+
+
+        { }
+      </div>
+    </Combobox>
                       </div>
                     </div>
                   </div>

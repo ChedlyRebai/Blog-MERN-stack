@@ -206,24 +206,32 @@ router.get('/search/:title', (req,res) => {
 });
 
 
-router.post('/addLike',(req,res)=>{
+router.post('/likeAndUnlike', async (req, res) => {
+  try {
+    const tokenValue = req.headers.authorization;
+    const token = tokenValue ? tokenValue.replace('Bearer ', '') : '';
+    const decoded = jwt.verify(token, "secret");
+    const idUser = decoded.id;
+    const { idPost } = req.body;
 
-  const tokenValue = req.headers.authorization;
-  const token= tokenValue ? tokenValue.replace('Bearer ', '') : '' ;
-  const decoded = jwt.verify(token, "secret");
-  const idUser= decoded.id; 
-  const {idPost}=req.body;
-  
-  
-  Post.findById(idPost)
-    .then(
-      (post)=>{
-        post.likes.push(idUser);
-        post.save();
-        console.log(post)
-      }
-    )
-})
+    const post = await Post.findById(idPost);
+
+    if (post.likes.includes(idUser)) {
+      await Post.findByIdAndUpdate(idPost, { $pull: { likes: idUser } });
+      console.log('User removed from likes');
+    } else {
+      await Post.findByIdAndUpdate(idPost, { $addToSet: { likes: idUser } });
+      console.log('User added to likes');
+    }
+
+    console.log(post);
+    res.send('Like/unlike operation completed.');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error');
+  }
+});
+
 
 router.post('/removeLike',(req,res)=>{
 
