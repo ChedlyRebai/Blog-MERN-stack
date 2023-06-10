@@ -103,5 +103,14 @@ router.delete('/:id',(req,res)=>{
 })
 
 
+router.get('getLastUsers',(req,res)=>{
+    User.find({}).sort({createdAt:-1}).limit(5).then(
+        (data)=>{
+            res.status(200).send(data)
+        }
+    )
+})
+
+
 module.exports=router;
 

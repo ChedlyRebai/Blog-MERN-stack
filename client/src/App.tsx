@@ -21,8 +21,18 @@ import { Sidebar } from 'flowbite-react';
 import Navbar from './components/Navbar';
 import { createContext } from 'react';
 import { MyGlobalContext } from './hooks/MyGlobalContext';
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
 import Cookies from 'js-cookie'
+import axios from 'axios';
+
+const queryClient= new QueryClient();
+
+const gelLastUsers = () => {
+  return useQuery('lastUsers',()=>{
+    return axios.get('http://localhost:4000/user/getLastUsers')
+  })
+}
 
 
 const App = () => {
@@ -36,15 +46,13 @@ const App = () => {
     
   const [authToken, setAuthToken] = useState('');
 
-  const navStyle = { position: 'fixed', top: 0, left: 0, right: 0 };
-
   return (
-    <MyGlobalContext.Provider value= {{ authToken, setAuthToken }}>
-    
-      <Navbar/>
-     
-      <RoutesComponent />
-    </MyGlobalContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <MyGlobalContext.Provider value= {{ authToken, setAuthToken }}>
+        <Navbar/>
+        <RoutesComponent />
+      </MyGlobalContext.Provider>
+    </QueryClientProvider>
   );
 };
 
